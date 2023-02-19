@@ -64,6 +64,12 @@ impl<'a> Fold for EnvReplacer<'a> {
           span: DUMMY_SP,
         }));
       }
+      if self.is_browser && match_member_expr(member, vec!["process", "env"], self.decls) {
+        return Expr::Object(ObjectLit {
+          span: DUMMY_SP,
+          props: vec![],
+        });
+      }
 
       if !self.replace_env {
         return node.fold_children_with(self);

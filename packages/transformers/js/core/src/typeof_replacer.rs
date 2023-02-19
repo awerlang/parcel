@@ -39,6 +39,14 @@ impl<'a> Fold for TypeofReplacer<'a> {
               raw: None,
             }));
           }
+
+          if ident.sym == js_word!("process") && !self.decls.contains(&id!(ident)) {
+            return Expr::Lit(Lit::Str(Str {
+              span: unary.span,
+              value: js_word!("object"),
+              raw: None,
+            }));
+          }
         }
       }
     }

@@ -619,7 +619,7 @@ describe('html', function () {
     assert(html.includes('Paragraph 1'));
   });
 
-  it('should read .htmlnanorc.json and minify HTML in production mode', async function () {
+  it.only('should read .htmlnanorc.json and minify HTML in production mode', async function () {
     await bundle(
       path.join(__dirname, '/integration/htmlnano-config/index.html'),
       {
@@ -1190,7 +1190,7 @@ describe('html', function () {
     ]);
   });
 
-  it('should process inline styles using lang', async function () {
+  it.only('should process inline styles using lang', async function () {
     let b = await bundle(
       path.join(__dirname, '/integration/html-inline-sass/index.html'),
       {

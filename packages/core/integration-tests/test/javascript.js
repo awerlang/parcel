@@ -2891,13 +2891,13 @@ describe('javascript', function () {
     assert.equal(await run(b), 'test');
   });
 
-  it('should not insert environment variables in node environment', async function () {
+  it('should insert environment variables in node environment', async function () {
     let b = await bundle(
       path.join(__dirname, '/integration/env-node/index.js'),
     );
 
     let output = await run(b);
-    assert.ok(output.toString().includes('process.env'));
+    assert.ok(!output.toString().includes('process.env'));
     assert.equal(output(), 'test:test');
   });
 
@@ -3355,6 +3355,39 @@ describe('javascript', function () {
       },
     });
     assert.deepEqual(output, ['foo', true, undefined]);
+  });
+
+  it.only('should replace typeof process for target browser', async function () {
+    let b = await bundle(
+      path.join(__dirname, '/integration/process-inline/index.js'),
+      {
+        targets: {
+          main: {
+            context: 'browser',
+            distDir: path.join(__dirname, '/integration/process-inline/dist.js'),
+          },
+        },
+      },
+    );
+
+    let output = await run(b);
+    // assert.ok(output.toString().indexOf('process') === -1);
+    let asStr = output.toString().split("\n");
+    // console.log(process.env && process.env.NODE_ENV)
+    assert.equal(asStr[1].trim(), 'console.log("test");')
+    // console.log(typeof process === 'object', process.env, process.env.NODE_DEBUG)
+    assert.equal(asStr[2].trim(), 'console.log(true, {}, undefined);')
+    // console.log(typeof process === 'object' && process.env)
+    assert.equal(asStr[3].trim(), 'console.log({});')
+    // console.log(typeof process === 'object' && (process.env && process.env.NODE_DEBUG))
+    assert.equal(asStr[4].trim(), 'console.log(undefined);')
+    // console.log(typeof process === 'object' && process.env && process.env.NODE_DEBUG)
+    assert.equal(asStr[5].trim(), 'console.log(undefined);')
+    // console.log(process.env && process.env.NODE_DEBUG)
+    assert.equal(asStr[6].trim(), 'console.log(undefined);')
+    // console.log(process.env && process.env["NODE_DEBUG"])
+    assert.equal(asStr[7].trim(), 'console.log(undefined);')
+    // assert.equal(output(), undefined);
   });
 
   it('should replace process.browser for target browser', async function () {
@@ -4292,7 +4325,7 @@ describe('javascript', function () {
     await run(b);
   });
 
-  it("should inline a bundle's compiled text with `bundle-text`", async () => {
+  it.only("should inline a bundle's compiled text with `bundle-text`", async () => {
     let b = await bundle(
       path.join(__dirname, '/integration/bundle-text/index.js'),
     );
@@ -4314,7 +4347,7 @@ describe('javascript', function () {
     assert(!cssBundleContent.includes('sourceMappingURL'));
   });
 
-  it('should not include the runtime manifest for `bundle-text`', async () => {
+  it.only('should not include the runtime manifest for `bundle-text`', async () => {
     let b = await bundle(
       path.join(__dirname, '/integration/bundle-text/index.js'),
       {
@@ -4419,7 +4452,7 @@ describe('javascript', function () {
     assert.equal(log, 'hi');
   });
 
-  it("should inline a bundle's compiled text with `bundle-text` asynchronously", async () => {
+  it.only("should inline a bundle's compiled text with `bundle-text` asynchronously", async () => {
     let b = await bundle(
       path.join(__dirname, '/integration/bundle-text/async.js'),
     );

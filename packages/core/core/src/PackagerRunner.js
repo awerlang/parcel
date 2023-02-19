@@ -368,10 +368,10 @@ export default class PackagerRunner {
   }
 
   getSourceMapReference(bundle: NamedBundle, map: ?SourceMap): Async<?string> {
-    if (map && bundle.env.sourceMap && bundle.bundleBehavior !== 'inline') {
+    if (map && bundle.env.sourceMap) {
       if (bundle.env.sourceMap && bundle.env.sourceMap.inline) {
         return this.generateSourceMap(bundleToInternalBundle(bundle), map);
-      } else {
+      } else if (bundle.bundleBehavior !== 'inline') {
         return path.basename(bundle.name) + '.map';
       }
     } else {
